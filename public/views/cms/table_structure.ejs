@@ -1,0 +1,27 @@
+<% const { structure_data } = table.info %> 
+<table border="1">
+    <tr>
+        <% for (let data of structure_data) { %>
+            <th><%= data %></th>
+        <% } %>
+    </tr>
+    
+    <% for (let chunk of table.structure) { %>
+        <tr>
+            <form method="POST">
+                <% for (let data of structure_data) { %>
+                    <td><%= chunk[data] %></td>
+                <% } %> 
+            </form>
+        </tr>
+    <% } %>
+    
+    <tr>
+        <form method="POST">
+            <% for (let data of structure_data) { %>
+                <td><input type="text" name="<%= data %>" <%= data === 'ORDINAL_POSITION' ? 'disabled' : '' %> ></td>
+            <% } %> 
+            <td><input type="submit" formaction="/cms/save" value="Save"></td>
+        </form>
+    </tr>
+</table>

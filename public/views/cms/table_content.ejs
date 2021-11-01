@@ -1,0 +1,33 @@
+<% const { keys } = table.info %>
+<table border="1">
+    <tr>
+        <% for (let key of keys) { %>
+            <th><%= key %></th>
+        <% } %>
+    </tr>
+
+    <% for (let chunk of table.content) { %>
+        <tr>
+            <form method="POST">
+                <% for (let order in keys) { %>
+                    <% const key = keys[order] %>
+                    <td><input type="text" name="<%= key %>" value="<%= chunk[key] %>" <%= table.structure[order].COLUMN_KEY === 'PRI' ? 'style=pointer-events:none;background:lightgrey;' : '' %>></td>
+                <% } %>
+                
+                <td><input type="submit" formaction="/cms/delete" value="Delete"></td>
+                <td><input type="submit" formaction="/cms/edit" value="Edit"></td>
+            </form>
+        </tr>
+    <% } %>
+    
+    <tr>
+        <form method="POST">
+            <% for (let order in keys) { %>
+                <% const key = keys[order] %>
+                <td><input type="text" name="<%= key %>" <%= table.structure[order].COLUMN_KEY === 'PRI' ? 'disabled' : '' %>></td>
+            <% } %> 
+
+            <td><input type="submit" formaction="/cms/save" value="Save"></td>
+        </form>
+    </tr>
+</table>

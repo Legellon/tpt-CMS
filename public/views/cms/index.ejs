@@ -1,0 +1,13 @@
+<%- include('../partials/header') %>
+
+<%- include('table_status') %>
+
+<% if (status !== codes.FAILED) { %>
+    <h3>Structure:</h3>
+    <%- include('table_structure') %></br>
+
+    <h3>Content:</h3>
+    <%- include('table_content') %> 
+<% } %>
+
+<%- include('../partials/footer') %> 
