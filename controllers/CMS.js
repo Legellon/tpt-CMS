@@ -56,7 +56,7 @@ module.exports = {
     },
 
     async Edit(req, res) {
-        const { [tableModel.primaryName]: primary, ...data} = req.bodyx
+        const { [tableModel.primaryName]: primary, ...data} = req.body
 
         await tableModel.editRow(primary, data)
 
