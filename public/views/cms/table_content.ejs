@@ -11,7 +11,7 @@
             <form method="POST">
                 <% for (let order in keys) { %>
                     <% const key = keys[order] %>
-                    <td><input type="text" name="<%= key %>" value="<%= chunk[key] %>" <%= table.structure[order].COLUMN_KEY === 'PRI' ? 'style=pointer-events:none;background:lightgrey;' : '' %>></td>
+                    <td><input type="text" name="<%= key %>" value="<%= chunk[key] %>" <%= table.structure[order].COLUMN_KEY === 'PRI' ? 'style=pointer-events:none;' : '' %>></td>
                 <% } %>
                 
                 <td><input type="submit" formaction="/cms/delete" value="Delete"></td>

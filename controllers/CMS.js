@@ -4,62 +4,61 @@ let tableModel
 
 module.exports = {
     async Render(req, res) {
-        const {database, table} = req.params
+        const { database, table } = req.params
 
         tableModel = new Table(database, table)
         await tableModel.initialize()
 
-        const { structure, connection_codes } = tableModel
         const T_ORB = {
             title: `${tableModel.name} CMS`,
 
-            table: {
-                source: tableModel.database,
-                name: tableModel.name,
+            table: await tableModel.buildORB(),
 
-                structure: structure,
-                content: await tableModel.getContent(),
-
-                info: {
-                    keys: structure.map(row => row.COLUMN_NAME),
-                    types: structure.map(row => row.COLUMN_TYPE),
-                    structure_data: Object.keys(structure.find(val => val ? true : false))
-                }
+            connection: {
+                codes: tableModel.connection_codes,
+                status: tableModel.connection_codes.SUCCESSFUL,
             },
-
-            codes: connection_codes,
-            status: connection_codes.SUCCESSFUL,
         }
 
         return res.status(200).render('cms/index', T_ORB)
     },
 
-    async Delete(req, res) {
-        const { id } = req.body
+    async Up(req, res) {
+        const { COLUMN_NAME, ORDINAL_POSITION } = req.body
 
-        await tableModel.deleteRow(id)
+        await tableModel.changeOrder(COLUMN_NAME, ORDINAL_POSITION - 2)
+
+        res.status(200).redirect('back')
+    },
+
+    async Down(req, res) {
+        const { COLUMN_NAME, ORDINAL_POSITION } = req.body
+
+        await tableModel.changeOrder(COLUMN_NAME, parseInt(ORDINAL_POSITION) + 1)
+        
+        res.status(200).redirect('back')
+    },
+
+    async Delete(req, res) {
+        const { [tableModel.primaryName]: primary } = req.body
+
+        await tableModel.deleteRow(primary)
 
         return res.status(200).redirect('back')
     },
 
     async Save(req, res) {
-        const { lang, count } = req.body
+        const { ...data } = req.body
 
-        await tableModel.saveRow({
-            lang: lang,
-            count: count
-        })
+        await tableModel.saveRow(data)
 
         return res.status(200).redirect('back')
     },
 
     async Edit(req, res) {
-        const { id, lang, count } = req.body
+        const { [tableModel.primaryName]: primary, ...data} = req.bodyx
 
-        await tableModel.editRow(id, {
-            lang: lang,
-            count: count
-        })
+        await tableModel.editRow(primary, data)
 
         return res.status(200).redirect('back')
     }
