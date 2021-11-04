@@ -34,14 +34,14 @@ module.exports = {
         const wrappedCollumns = Object.keys(data).map(column => `\`${column}\``)
         const wrappedValues = Object.values(data).map(value => `'${value}'`)
 
-        const setString = []
+        let setString = []
 
         for (let index in wrappedCollumns) {
             setString.push(`${wrappedCollumns[index]} = ${wrappedValues[index]}`)
         }
 
-        const setCondition = setString.join(', ')
+        setString = setString.join(', ')
 
-        return `UPDATE \`${TableModel.database}\`.\`${TableModel.name}\` SET ${setCondition} WHERE (\`${TableModel.primaryName}\` = '${id}');`
+        return `UPDATE \`${TableModel.database}\`.\`${TableModel.name}\` SET ${setString} WHERE (\`${TableModel.primaryName}\` = '${id}');`
     }
 }
