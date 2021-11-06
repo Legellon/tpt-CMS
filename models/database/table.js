@@ -13,14 +13,6 @@ const Table = class {
 
     async initialize() {
         this._structure = await this._getStructure()
-        this.publicStructure = this._structure.map(element => {
-            return { 
-                COLUMN_NAME: element.COLUMN_NAME, 
-                COLUMN_TYPE: element.COLUMN_TYPE, 
-                COLUMN_KEY: element.COLUMN_KEY,
-                ORDINAL_POSITION: element.ORDINAL_POSITION,
-            }
-        })
 
         this._primary = this._structure.find(element => element.COLUMN_KEY === 'PRI')
         this.primaryName = this._primary.COLUMN_NAME
@@ -35,17 +27,26 @@ const Table = class {
     }
 
     async buildORB() {
+        const publicStructure = this._structure.map(element => {
+            return { 
+                COLUMN_NAME: element.COLUMN_NAME, 
+                COLUMN_TYPE: element.COLUMN_TYPE, 
+                COLUMN_KEY: element.COLUMN_KEY,
+                ORDINAL_POSITION: element.ORDINAL_POSITION,
+            }
+        })
+        
         const ORB = {
             source: this.database,
             name: this.name,
 
-            structure: this.publicStructure,
+            structure: publicStructure,
             content: await this._getContent(),
 
             info: {
-                keys: this.publicStructure.map(row => row.COLUMN_NAME),
-                types: this.publicStructure.map(row => row.COLUMN_TYPE),
-                structure_data: Object.keys(this.publicStructure.find(val => val ? true : false))
+                keys: publicStructure.map(row => row.COLUMN_NAME),
+                types: publicStructure.map(row => row.COLUMN_TYPE),
+                structure_data: Object.keys(publicStructure.find(val => val ? true : false))
             }
         }
 
