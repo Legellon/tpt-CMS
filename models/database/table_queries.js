@@ -10,12 +10,13 @@ module.exports = {
     changeOrder(TableModel, state, after) {
         const { COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, COLUMN_DEFAULT, EXTRA } = state
 
-        const nullable = IS_NULLABLE === 'YES' ? 'NULL' : 'NOT NULL'
-        const __default = COLUMN_DEFAULT !== null ? `DEFAULT '${COLUMN_DEFAULT}'` : ''
+        const nullable = IS_NULLABLE === 'YES' ? 'NULL ' : 'NOT NULL '
+        const __default = COLUMN_DEFAULT !== null ? `DEFAULT '${COLUMN_DEFAULT}' ` : ''
+        const extras = EXTRA !== '' ? `${EXTRA.toUpperCase()} ` : ''
         const position = after !== 'FIRST' ? `AFTER \`${after}\`` : 'FIRST'
 
-        const changeString = `COLUMN \`${COLUMN_NAME}\` \`${COLUMN_NAME}\` ${COLUMN_TYPE.toUpperCase()} ${nullable} ${__default}${EXTRA.toUpperCase()} ${position}`
-        
+        const changeString = `COLUMN \`${COLUMN_NAME}\` \`${COLUMN_NAME}\` ${COLUMN_TYPE.toUpperCase()} ${nullable}${__default}${extras}${position}`
+                
         return `ALTER TABLE \`${TableModel.database}\`.\`${TableModel.name}\` CHANGE ${changeString};`
     },
 
