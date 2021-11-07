@@ -1,6 +1,6 @@
 module.exports = {
     /**
-     * Select a structure of the table
+     * Get query string for select a structure of the table
      * @param {object} TableModel 
      * @returns {string} SQL query
      */
@@ -9,7 +9,7 @@ module.exports = {
     },
 
     /**
-     * Select all content in the table
+     * Get query string for select all content in the table
      * @param {object} TableModel 
      * @returns {string} SQL query
      */
@@ -18,7 +18,7 @@ module.exports = {
     },
 
     /**
-     * Alter order of column
+     * Get query string for alter order of column
      * @param {object} TableModel
      * @param {object} state 
      * @param {string} after
@@ -38,7 +38,7 @@ module.exports = {
     },
 
     /**
-     * Insert a new row to the table
+     * Get query string for insert a new row to the table
      * @param {object} TableModel
      * @param {object} data
      * @returns {string} SQL query
@@ -51,7 +51,7 @@ module.exports = {
     },
 
     /**
-     * Delete row from the table
+     * Get query string for delete row from the table
      * @param {object} TableModel
      * @param {number} id
      * @returns {string} SQL query
@@ -61,7 +61,7 @@ module.exports = {
     },
 
     /**
-     * Update row in the table
+     * Get query string for update row in the table
      * @param {object} TableModel
      * @param {number} id
      * @param {object} data

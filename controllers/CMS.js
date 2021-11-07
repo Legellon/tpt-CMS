@@ -42,7 +42,6 @@ module.exports = {
     },
 
     async Delete(req, res) {
-        //assign primary value from form by primary name into the table
         const { [tableModel.primaryName]: primary } = req.body
 
         await tableModel.deleteRow(primary)
