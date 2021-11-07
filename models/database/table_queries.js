@@ -1,7 +1,7 @@
 module.exports = {
     /**
      * Get query string for select a structure of the table
-     * @param {object} TableModel 
+     * @param {object} TableModel an instance of the Table class
      * @returns {string} SQL query
      */
     getStructure(TableModel) {
@@ -10,7 +10,7 @@ module.exports = {
 
     /**
      * Get query string for select all content in the table
-     * @param {object} TableModel 
+     * @param {object} TableModel an instance of the Table class
      * @returns {string} SQL query
      */
     getContent(TableModel) {
@@ -18,10 +18,10 @@ module.exports = {
     },
 
     /**
-     * Get query string for alter order of column
-     * @param {object} TableModel
-     * @param {object} state 
-     * @param {string} after
+     * Get query string for alter the order of column
+     * @param {object} TableModel an instance of the Table class
+     * @param {object} state current state of the row 
+     * @param {string} after a name of the row after which will be placed
      * @returns {string} SQL query
      */
     changeOrder(TableModel, state, after) {
@@ -39,8 +39,8 @@ module.exports = {
 
     /**
      * Get query string for insert a new row to the table
-     * @param {object} TableModel
-     * @param {object} data
+     * @param {object} TableModel an instance of the Table class
+     * @param {object} data data for insert
      * @returns {string} SQL query
      */
     saveRow(TableModel, data) {
@@ -51,9 +51,9 @@ module.exports = {
     },
 
     /**
-     * Get query string for delete row from the table
-     * @param {object} TableModel
-     * @param {number} id
+     * Get query string for delete a row from the table
+     * @param {object} TableModel an instance of the Table class
+     * @param {number} id a primary key of the row
      * @returns {string} SQL query
      */
     deleteRow(TableModel, id) {
@@ -61,10 +61,10 @@ module.exports = {
     },
 
     /**
-     * Get query string for update row in the table
-     * @param {object} TableModel
-     * @param {number} id
-     * @param {object} data
+     * Get query string for update a row in the table
+     * @param {object} TableModel an instance of the Table class
+     * @param {number} id a primary key of the row
+     * @param {object} data new data for the row
      * @returns {string} SQL query
      */
     editRow(TableModel, id, data) {

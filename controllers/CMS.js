@@ -1,6 +1,6 @@
 const Table = require('../models/database/table')
 
-let tableModel
+let tableModel = new Table() //create an empty instance of Table for type defining of variable
 
 module.exports = {
     async Render(req, res) {
