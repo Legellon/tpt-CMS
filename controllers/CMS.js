@@ -26,7 +26,8 @@ module.exports = {
     async Up(req, res) {
         const { COLUMN_NAME, ORDINAL_POSITION } = req.body
 
-        await tableModel.changeOrder(COLUMN_NAME, ORDINAL_POSITION - 2)
+        //need to get a position of the line near to the next line to take the place of the next line(ORDINAL_POSITION - 2)
+        await tableModel.changeOrder(COLUMN_NAME, parseInt(ORDINAL_POSITION) - 2)
 
         res.status(200).redirect('back')
     },
@@ -34,12 +35,14 @@ module.exports = {
     async Down(req, res) {
         const { COLUMN_NAME, ORDINAL_POSITION } = req.body
 
+        //need to get a position of the previous line to take the place of the previous line(ORDINAL_POSITION + 1)
         await tableModel.changeOrder(COLUMN_NAME, parseInt(ORDINAL_POSITION) + 1)
         
         res.status(200).redirect('back')
     },
 
     async Delete(req, res) {
+        //assign primary value from form by primary name into the table
         const { [tableModel.primaryName]: primary } = req.body
 
         await tableModel.deleteRow(primary)
