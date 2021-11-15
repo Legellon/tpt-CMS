@@ -3,30 +3,56 @@ const queries = require('./table_queries')
 
 /** Data and behavior of the table form database */
 const Table = class {
+    //enums
+    static types = { 
+        virtual: 0,
+        real: 1
+    }
+    static connection_codes = connection.codes
+
+    //Private attributes
+    #structure
+    #primary_element
+    #connection
+
     /**
      * Construct a table by name of the table and the database
+     * 
+     * Note: if you create a real instance, you MUST initialize() an object after creation if you are going to use it
      * @constructor 
      * @param {string} database Database name
      * @param {string} table Table name
      */
     constructor(database, table) {
-        this._connection = connection(database)
+        if(database && table) {
+            this.#constructAsReal(database, table)
+        } else {
+            this.#constructAsVirtual()
+        }
+    }
+
+    #constructAsReal(database, table) {
+        this.#connection = connection.create(database)
 
         this.name = table
         this.database = database
 
-        this.connection_codes = { FAILED: 0, SUCCESSFUL: 1 }
+        this.type = Table.types.real
+    }
+
+    #constructAsVirtual() {
+        this.type = Table.types.virtual
     }
 
     /**
-     * Construct all async data of table
+     * Generate state for the table in async mode
      * @async
      */
-    async initialize() {
-        this._structure = await this._getStructure()
+     async initialize() {
+        this.#structure = await this.#getStructure()
 
-        this._primary = this._structure.find(element => element.COLUMN_KEY === 'PRI')
-        this.primaryName = this._primary.COLUMN_NAME
+        this.#primary_element = this.#structure.find(element => element.COLUMN_KEY === 'PRI')
+        this.primary_name = this.#primary_element.COLUMN_NAME
     }
 
     /**
@@ -35,9 +61,9 @@ const Table = class {
      * @param {string} sql Query
      * @returns {Promise} Result of execution
      */
-    async _executeQuery(sql) {
+    async #executeQuery(sql) {
         return new Promise((resolve) => {
-            this._connection.execute(sql, (err, result) => {
+            this.#connection.execute(sql, (err, result) => {
                 return resolve(result)
             })
         })
@@ -48,8 +74,8 @@ const Table = class {
      * @async
      * @returns {object} JSON object
      */
-    async buildORB() {
-        const publicStructure = this._structure.map(element => {
+    async ORB() {
+        const publicStructure = this.#structure.map(element => {
             return { 
                 COLUMN_NAME: element.COLUMN_NAME, 
                 COLUMN_TYPE: element.COLUMN_TYPE, 
@@ -63,7 +89,7 @@ const Table = class {
             name: this.name,
 
             structure: publicStructure,
-            content: await this._getContent(),
+            content: await this.#getContent(),
 
             info: {
                 keys: publicStructure.map(row => row.COLUMN_NAME), //get column names
@@ -80,39 +106,36 @@ const Table = class {
      * @async
      * @param {string} column A name of the column
      * @param {number} position A new position
-     * @returns {Promise}
      */
     async changeOrder(column, position) {
-        const currentState = this._structure.find(element => element.COLUMN_NAME === column)
-        const rowsCount = this._structure.length //count of rows in the table
+        const currentState = this.#structure.find(element => element.COLUMN_NAME === column)
+        const rowsCount = this.#structure.length //count of rows in the table
 
         //a new position can't be lesser than 0(already first) and bigger than a count of rows in the table(already last)
         position = position < 0 ? 0 : position > rowsCount ? rowsCount - 1 : position
-
         //get the name of the element from the order by position if a position isn't first
-        const after = position === 0 ? 'FIRST' : this._structure.find(element => element.ORDINAL_POSITION === position).COLUMN_NAME
+        const after = position === 0 ? 'FIRST' : this.#structure.find(element => element.ORDINAL_POSITION === position).COLUMN_NAME
 
-        return await this._executeQuery(queries.changeOrder(this, currentState, after))
+        await this.#executeQuery(queries.changeOrder(this, currentState, after))
+        await this.initialize() //method has a straight influence on the state of the table, so we need to reinitialize the table
     }
 
     /**
      * Save a new row in the table
      * @async
      * @param {object} data Data as a JSON object where keys match with names of table columns
-     * @returns {Promise} Result of execution
      */
     async saveRow(data) {
-        return await this._executeQuery(queries.saveRow(this, data))
+        await this.#executeQuery(queries.saveRow(this, data))
     }
 
     /**
      * Delete a row from the table
      * @async
      * @param {number} id Primary key of row
-     * @returns {Promise} Result of execution
      */
     async deleteRow(id) {
-        return await this._executeQuery(queries.deleteRow(this, id))
+        await this.#executeQuery(queries.deleteRow(this, id))
     }
 
     /**
@@ -120,10 +143,9 @@ const Table = class {
      * @async
      * @param {number} id Primary key of row
      * @param {object} data Data as a JSON object where keys match with names of table columns
-     * @returns {Promise} Result of execution
      */
     async editRow(id, data) {
-        return await this._executeQuery(queries.editRow(this, id, data))
+        await this.#executeQuery(queries.editRow(this, id, data))
     }
 
     /**
@@ -131,8 +153,8 @@ const Table = class {
      * @async
      * @returns {Promise} Result of execution
      */
-    async _getStructure() {
-        return await this._executeQuery(queries.getStructure(this))
+    async #getStructure() {
+        return await this.#executeQuery(queries.getStructure(this))
     }
 
     /**
@@ -140,8 +162,8 @@ const Table = class {
      * @async
      * @returns {Promise} Result of execution
      */
-    async _getContent() {
-        return await this._executeQuery(queries.getContent(this))
+    async #getContent() {
+        return await this.#executeQuery(queries.getContent(this))
     }
 }
 

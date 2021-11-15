@@ -1,22 +1,25 @@
 const Table = require('../models/database/table')
 
-let tableModel = new Table() //create an empty instance of Table for type defining of variable
+let tableModel = new Table //create a virtual instance of Table for type defining of variable
 
 module.exports = {
     async Render(req, res) {
         const { database, table } = req.params
 
-        tableModel = new Table(database, table)
-        await tableModel.initialize()
+        //if the table isn't real then construct it as real
+        if (tableModel.type !== Table.types.real) {
+            tableModel = new Table(database, table)
+            await tableModel.initialize()
+        }
 
         const T_ORB = {
             title: `${tableModel.name} CMS`,
 
-            table: await tableModel.buildORB(),
+            table: await tableModel.ORB(),
 
             connection: {
-                codes: tableModel.connection_codes,
-                status: tableModel.connection_codes.SUCCESSFUL,
+                codes: Table.connection_codes,
+                status: Table.connection_codes.successful,
             },
         }
 
@@ -42,7 +45,7 @@ module.exports = {
     },
 
     async Delete(req, res) {
-        const { [tableModel.primaryName]: primary } = req.body
+        const { [tableModel.primary_name]: primary } = req.body
 
         await tableModel.deleteRow(primary)
 
@@ -58,7 +61,7 @@ module.exports = {
     },
 
     async Edit(req, res) {
-        const { [tableModel.primaryName]: primary, ...data} = req.body
+        const { [tableModel.primary_name]: primary, ...data} = req.body
 
         await tableModel.editRow(primary, data)
 

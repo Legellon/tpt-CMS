@@ -3,13 +3,20 @@ const config = require('../../config/config')
 
 const default_database = config.database.fedotov_schema
 
-const connection = (database = default_database.NAME, user = default_database.USER, password = default_database.PASS, host = default_database.HOST) => {
-    return mysql.createConnection({
-        database: database,
-        password: password,
-            user: user,
-            host: host,
-    })
-}
+module.exports = {
+    //enums
+    codes: { 
+        failed: 0, 
+        successful: 1 
+    },
 
-module.exports = connection
+    create(database = default_database.NAME, user = default_database.USER, password = default_database.PASS, host = default_database.HOST) {
+        return mysql.createConnection({
+            database: database,
+            password: password,
+                user: user,
+                host: host,
+        })
+    }
+
+}

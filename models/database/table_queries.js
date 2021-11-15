@@ -57,7 +57,7 @@ module.exports = {
      * @returns {string} SQL query
      */
     deleteRow(TableModel, id) {
-        return `DELETE FROM \`${TableModel.database}\`.\`${TableModel.name}\` WHERE (\`${TableModel.primaryName}\` = '${id}');`
+        return `DELETE FROM \`${TableModel.database}\`.\`${TableModel.name}\` WHERE (\`${TableModel.primary_name}\` = '${id}');`
     },
 
     /**
@@ -79,6 +79,6 @@ module.exports = {
 
         setString = setString.join(', ')
 
-        return `UPDATE \`${TableModel.database}\`.\`${TableModel.name}\` SET ${setString} WHERE (\`${TableModel.primaryName}\` = '${id}');`
+        return `UPDATE \`${TableModel.database}\`.\`${TableModel.name}\` SET ${setString} WHERE (\`${TableModel.primary_name}\` = '${id}');`
     }
 }

@@ -11,7 +11,7 @@
             <form method="POST">
                 <% for (let order in structure_data) { %>
                     <% const col = structure_data[order]%> 
-                    <td><input type="text" name="<%= col %>" value="<%= chunk[col] %>" <%= col !== 'ORDINAL_POSITION' ? '' : '' %>></td>
+                    <td><input type="text" name="<%= col %>" value="<%= chunk[col] %>" <%= col === 'COLUMN_TYPE' ? 'style=pointer-events:none;' : col === 'COLUMN_KEY' ? 'style=pointer-events:none;' : '' %>></td>
                 <% } %>
 
                 <td><input type="submit" formaction="/cms/down" value="Down"></td>

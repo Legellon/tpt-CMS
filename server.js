@@ -14,4 +14,4 @@ server.use(express.urlencoded({ extended: false}))
 
 server.use('/cms', require('./router/CMS'))
 
-server.listen(SERVER_PORT)
+server.listen(SERVER_PORT, console.log(`Application started on port: ${SERVER_PORT}`))
